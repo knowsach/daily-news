@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tasks_status_architecture/common_components/news_card.dart';
 import 'package:tasks_status_architecture/common_components/provider_handler.dart';
 import 'package:tasks_status_architecture/view_models/news_provider.dart';
@@ -26,9 +27,6 @@ class _HomeState extends State<Home> {
           ),
           body: TabBarView(
             children: [
-              // Container(
-              //     child: data.isLoader ? Loader('splash') : newsFeeds(data, false))
-
               ProviderHandler<NewsProvider>(
                 key: UniqueKey(),
                 functionName: NewsProvider().GET_DATA,
@@ -57,6 +55,27 @@ class _HomeState extends State<Home> {
                   );
                 },
               ),
+              Consumer<NewsProvider>(
+                builder: (context, provider, _) {
+                  return provider.todaysNews != null
+                      ? provider.todaysNews.isNotEmpty
+                          ? ListView.builder(
+                              itemCount: provider.todaysNews.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: [
+                                    provider.todaysNews[index].isFav
+                                        ? NewsCard(provider.todaysNews[index],
+                                            index: index, isNewsDesc: false)
+                                        : SizedBox(),
+                                  ],
+                                );
+                              },
+                            )
+                          : Text('No favourites found')
+                      : Text('No favourites found');
+                },
+              ),
             ],
           ),
         ),
@@ -71,7 +90,6 @@ class _HomeState extends State<Home> {
       controller: _listScrollController,
       itemCount: allNewsData.length,
       itemBuilder: (context, index) {
-        print('in list view');
         return Column(
           children: [
             NewsCard(allNewsData[index], index: index, isNewsDesc: false),

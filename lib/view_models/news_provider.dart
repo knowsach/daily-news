@@ -6,9 +6,6 @@ import 'package:http/http.dart';
 
 class NewsProvider extends BaseModel {
   List<Article> todaysNews = [];
-  // bool isLoader;
-  // bool isPaginationLoader = false;
-  // int page = 1;
 
   // operations
   String GET_DATA = 'GET_DATA';
@@ -17,23 +14,30 @@ class NewsProvider extends BaseModel {
   Future getData({String country = 'in'}) async {
     setStatus(GET_DATA, Status.Loading);
 
-    Response response = await get(
-        '${Constants().api}country=$country&apiKey=${Constants().apiKey}');
-    Map data = jsonDecode(response.body);
+    try {
+      Response response = await get(
+          '${Constants().api}country=$country&apiKey=${Constants().apiKey}');
+      Map data = jsonDecode(response.body);
 
-    data.containsKey('articles')
-        ? data['articles']
-            .forEach((article) => {todaysNews.add(Article.fromJson(article))})
-        : todaysNews = [];
+      data.containsKey('articles')
+          ? data['articles']
+              .forEach((article) => {todaysNews.add(Article.fromJson(article))})
+          : todaysNews = [];
 
-    setStatus(GET_DATA, Status.Done);
+      setStatus(GET_DATA, Status.Done);
+    } catch (e) {
+      setStatus(GET_DATA, Status.Error);
+    }
   }
 
-  markFavNews(int index) {
+  markFavNews(int index) async {
     setStatus(MARK_FAV, Status.Loading);
+
+    await Future.delayed(Duration(seconds: 1));
 
     if (index > todaysNews.length) {
       setStatus(MARK_FAV, Status.Error);
+      setError(MARK_FAV, 'index not in range');
       return;
     }
     todaysNews[index].isFav = !todaysNews[index].isFav;

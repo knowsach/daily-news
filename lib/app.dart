@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tasks_status_architecture/common_components/nav_service.dart';
 import 'package:tasks_status_architecture/routes/routes.dart';
 import 'package:tasks_status_architecture/view_models/news_provider.dart';
 
@@ -29,6 +30,7 @@ class MaterialAppClass extends StatelessWidget {
       title: 'News App',
       initialRoute: SetupRoutes.initialRoute,
       routes: SetupRoutes.routes,
+      navigatorKey: NavService.navKey,
       debugShowCheckedModeBanner: false,
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tasks_status_architecture/common_components/loading_widget.dart';
 import 'package:tasks_status_architecture/view_models/base_model.dart';
 
 Future providerCallback<T extends BaseModel>(BuildContext context,
@@ -13,12 +14,9 @@ Future providerCallback<T extends BaseModel>(BuildContext context,
   final T _provider = Provider.of<T>(context, listen: false);
   String _taskName = taskName(_provider);
 
-  if (showLoader) ;
+  if (showLoader) LoadingDialog().show();
   await Future.microtask(() => task(_provider));
-  if (showLoader)
-    return Center(
-      child: CircularProgressIndicator(),
-    );
+  if (showLoader) LoadingDialog().hide();
   print(
       'status before=====>_provider.status[_taskName]====>${_provider.status[_taskName]}');
   if (_provider.status[_taskName] == Status.Error) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tasks_status_architecture/common_components/loading.dart';
 import 'package:tasks_status_architecture/common_components/news_description.dart';
 import 'package:tasks_status_architecture/common_components/provider_callback.dart';
@@ -29,9 +28,6 @@ class _NewsCardState extends State<NewsCard> {
     return GestureDetector(
       onTap: () {
         if (!widget.isNewsDesc) {
-          // Navigator.pushNamed(context, '/desc',
-          //     arguments: {'article': widget.article});
-
           Navigator.of(context).push(PageRouteBuilder(
             fullscreenDialog: true,
             transitionDuration: Duration(milliseconds: 900),
@@ -98,10 +94,8 @@ class _NewsCardState extends State<NewsCard> {
                         ? Container(
                             padding: EdgeInsets.all(10),
                             child: Text(widget.article.description,
-                                // maxLines: 5,
                                 style: TextStyle(
                                   fontSize: 18,
-                                  // fontWeight: FontWeight.bold,
                                 )))
                         : Container(),
                   ),
@@ -125,16 +119,16 @@ class _NewsCardState extends State<NewsCard> {
                               Expanded(
                                 child: Container(
                                   child: GestureDetector(
-                                    onTap: () {
-                                      // var newsData =
-                                      //     context.read<NewsProvider>();
-                                      // newsData.changeFavourite(widget.index);
-                                      providerCallback<NewsProvider>(context,
-                                          task: (t) =>
-                                              t.markFavNews(widget.index),
+                                    onTap: () async {
+                                      await providerCallback<NewsProvider>(
+                                          context,
+                                          task: (provider) => provider
+                                              .markFavNews(widget.index),
                                           taskName: (t) => t.MARK_FAV,
+                                          showLoader: true,
+                                          showDialog: true,
                                           onSuccess: (t) {
-                                            Navigator.of(context).pop();
+                                            print('article updated');
                                           });
                                     },
                                     child: Icon(
