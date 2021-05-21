@@ -8,12 +8,11 @@ class NewsProvider extends BaseModel {
   List<Article> todaysNews = [];
 
   // operations
-  String GET_DATA = 'GET_DATA';
-  String MARK_FAV = 'MARK_FAV';
+  String GET_DATA = 'get_data';
+  String LIKE_ARTICLE = 'like_article';
 
-  Future getData({String country = 'in'}) async {
+  Future getNewsData({String country = 'in'}) async {
     setStatus(GET_DATA, Status.Loading);
-
     try {
       Response response = await get(
           '${Constants().api}country=$country&apiKey=${Constants().apiKey}');
@@ -24,25 +23,26 @@ class NewsProvider extends BaseModel {
               .forEach((article) => {todaysNews.add(Article.fromJson(article))})
           : todaysNews = [];
 
+      setData(GET_DATA, todaysNews);
       setStatus(GET_DATA, Status.Done);
     } catch (e) {
+      setError(GET_DATA, e.toString());
       setStatus(GET_DATA, Status.Error);
     }
   }
 
-  markFavNews(int index) async {
-    setStatus(MARK_FAV, Status.Loading);
-
+  likeNewsArticle(int index) async {
+    setStatus(LIKE_ARTICLE, Status.Loading);
     await Future.delayed(Duration(seconds: 1));
 
     if (index > todaysNews.length) {
-      setStatus(MARK_FAV, Status.Error);
-      setError(MARK_FAV, 'index not in range');
+      setStatus(LIKE_ARTICLE, Status.Error);
+      setError(LIKE_ARTICLE, 'index not in range');
       return;
     }
     todaysNews[index].isFav = !todaysNews[index].isFav;
 
-    setStatus(MARK_FAV, Status.Done);
+    setStatus(LIKE_ARTICLE, Status.Done);
   }
 }
 
@@ -84,17 +84,4 @@ class Article {
         'urlToImage': urlToImage,
         'isFav': isFav
       };
-
-// all variable keys
-  final Map<String, String> modelKeyValue = {
-    'desc': 'description',
-    'title': 'title',
-    'author': 'author',
-    'site_url': 'url',
-    'preview_img': 'urlToImage',
-  };
-
-  Map<String, String> getKeys() {
-    return modelKeyValue;
-  }
 }

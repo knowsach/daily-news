@@ -1,5 +1,5 @@
 /// This is a custom widget to handle states from view models
-/// This takes in a [functionName] as a String to render only function which is called,
+/// This takes in a [taskName] as a String to render only function which is called,
 /// a [successBuilder] which tells what to render is status is [Status.Done]
 /// [Status.Loading] renders a CircularProgressIndicator whereas
 /// [Status.Error] renders [errorBuilder]
@@ -12,7 +12,7 @@ class ProviderHandler<T extends BaseModel> extends StatelessWidget {
   final Widget Function(T) successBuilder;
   final Widget Function(T) errorBuilder;
   final Widget Function(T) loaderBuilder;
-  final String functionName;
+  final String taskName;
   final bool showError;
   final Function(T) load;
 
@@ -20,7 +20,7 @@ class ProviderHandler<T extends BaseModel> extends StatelessWidget {
       {Key key,
       this.successBuilder,
       this.errorBuilder,
-      this.functionName,
+      this.taskName,
       this.showError,
       this.loaderBuilder,
       this.load})
@@ -28,27 +28,27 @@ class ProviderHandler<T extends BaseModel> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<T>(builder: (context, _provider, __) {
-      if (_provider?.status[functionName] == Status.Loading) {
-        return loaderBuilder(_provider) ??
-            Center(
-              child: Container(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(),
-              ),
-            );
-      } else if (_provider?.status[functionName] == Status.Error) {
+      if (_provider?.status[taskName] == Status.Loading) {
+        return loaderBuilder != null
+            ? loaderBuilder(_provider)
+            : Center(
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  child: CircularProgressIndicator(),
+                ),
+              );
+      } else if (_provider?.status[taskName] == Status.Error) {
         if (showError) {
           // ErrorDialog()
-          //     .show(_provider.error[functionName].toString(), context: context);
-          AlertDialog();
-          _provider.reset(functionName);
+          //     .show(_provider.error[taskName].toString(), context: context);
+          _provider.reset(taskName);
           return SizedBox();
         } else {
-          _provider.reset(functionName);
+          // _provider.reset(taskName);
           return errorBuilder(_provider);
         }
-      } else if (_provider?.status[functionName] == Status.Done) {
+      } else if (_provider?.status[taskName] == Status.Done) {
         return successBuilder(_provider);
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) async {

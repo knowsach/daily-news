@@ -15,12 +15,9 @@ class NewsCard extends StatefulWidget {
 }
 
 class _NewsCardState extends State<NewsCard> {
-  Map<String, String> keys;
-
   @override
   void initState() {
     super.initState();
-    keys = widget.article.getKeys();
   }
 
   @override
@@ -122,12 +119,17 @@ class _NewsCardState extends State<NewsCard> {
                                     onTap: () async {
                                       await providerCallback<NewsProvider>(
                                           context,
-                                          task: (provider) => provider
-                                              .markFavNews(widget.index),
-                                          taskName: (t) => t.MARK_FAV,
+                                          load: (provider) => provider
+                                              .likeNewsArticle(widget.index),
+                                          taskName: (provider) =>
+                                              provider.LIKE_ARTICLE,
                                           showLoader: true,
                                           showDialog: true,
-                                          onSuccess: (t) {
+                                          onErrorHandeling: (provider) {
+                                            print(
+                                                'error: ${provider.error[provider.LIKE_ARTICLE]}');
+                                          },
+                                          onSuccess: (provider) {
                                             print('article updated');
                                           });
                                     },

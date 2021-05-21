@@ -11,6 +11,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   @override
+  void initState() {
+    super.initState();
+    // Provider.of<NewsProvider>(context, listen: false).getData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: DefaultTabController(
@@ -29,25 +35,24 @@ class _HomeState extends State<Home> {
             children: [
               ProviderHandler<NewsProvider>(
                 key: UniqueKey(),
-                functionName: NewsProvider().GET_DATA,
+                taskName: NewsProvider().GET_DATA,
                 showError: false,
-                load: (provider) => provider.getData(),
-                loaderBuilder: (provider) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
+                load: (provider) => provider.getNewsData(),
                 errorBuilder: (provider) {
+                  print(
+                      'error data: ${provider.error[NewsProvider().GET_DATA]}');
                   return Center(
-                      child: Container(child: Text('Something went wrong...')));
+                      child: Container(
+                          child: Text(provider.error[provider.GET_DATA])));
                 },
                 successBuilder: (provider) {
+                  print('data: ${provider.data[NewsProvider().GET_DATA]}');
                   return ListView.builder(
-                    itemCount: provider.todaysNews.length,
+                    itemCount: provider.data[provider.GET_DATA].length,
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          NewsCard(provider.todaysNews[index],
+                          NewsCard(provider.data[provider.GET_DATA][index],
                               index: index, isNewsDesc: false),
                         ],
                       );

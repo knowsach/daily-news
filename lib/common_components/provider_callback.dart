@@ -4,18 +4,18 @@ import 'package:tasks_status_architecture/common_components/loading_widget.dart'
 import 'package:tasks_status_architecture/view_models/base_model.dart';
 
 Future providerCallback<T extends BaseModel>(BuildContext context,
-    {@required final Function(T) task,
+    {@required final Function(T) load,
     @required final String Function(T) taskName,
     @required Function(T) onSuccess,
     bool showDialog = true,
     bool showLoader = true,
-    Function onErrorHandeling,
+    Function(T) onErrorHandeling,
     Function onError}) async {
   final T _provider = Provider.of<T>(context, listen: false);
   String _taskName = taskName(_provider);
 
   if (showLoader) LoadingDialog().show();
-  await Future.microtask(() => task(_provider));
+  await Future.microtask(() => load(_provider));
   if (showLoader) LoadingDialog().hide();
   print(
       'status before=====>_provider.status[_taskName]====>${_provider.status[_taskName]}');

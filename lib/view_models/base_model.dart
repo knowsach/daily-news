@@ -3,25 +3,31 @@ import 'package:flutter/material.dart';
 class BaseModel with ChangeNotifier {
   Map<String, Status> status = {'main': Status.Idle};
   Map<String, String> error = {};
-  setStatus(String function, Status _status) {
-    this.status[function] = _status;
+  Map<String, dynamic> data = <String, dynamic>{};
+
+  setStatus(String taskName, Status _status) {
+    this.status[taskName] = _status;
     notifyListeners();
   }
 
-  setError(String function, String _error, [Status _status]) {
+  setData(String taskName, dynamic _data) {
+    this.data[taskName] = _data;
+  }
+
+  setError(String taskName, String _error, [Status _status]) {
     if (_error != null) {
-      error[function] = _error;
-      status[function] = Status.Error;
+      error[taskName] = _error;
+      status[taskName] = Status.Error;
     } else {
-      this.error[function] = null;
-      this.status[function] = _status ?? Status.Idle;
+      this.error[taskName] = null;
+      this.status[taskName] = _status ?? Status.Idle;
     }
     notifyListeners();
   }
 
-  reset(String function) {
-    this.error?.remove(function);
-    this.status?.remove(function);
+  reset(String taskName) {
+    this.error?.remove(taskName);
+    this.status?.remove(taskName);
   }
 }
 
