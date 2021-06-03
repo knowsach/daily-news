@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tasks_status_architecture/common_components/error_dialog.dart';
 import 'package:tasks_status_architecture/view_models/base_model.dart';
 
 class ProviderHandler<T extends BaseModel> extends StatelessWidget {
@@ -40,8 +41,8 @@ class ProviderHandler<T extends BaseModel> extends StatelessWidget {
               );
       } else if (_provider?.status[taskName] == Status.Error) {
         if (showError) {
-          // ErrorDialog()
-          //     .show(_provider.error[taskName].toString(), context: context);
+          ErrorDialog()
+              .show(_provider.error[taskName].toString(), context: context);
           _provider.reset(taskName);
           return SizedBox();
         } else {
